@@ -1,0 +1,103 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.site-background {
+  background-color: #f7fafc;
+}
+
+.site-header {
+  background-color: #ffffff;
+  padding: 10px 20px; /* 상단과 하단 패딩을 줄여 로고를 더 상단에 가깝게 함 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-and-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.site-logo {
+  margin-right: 50px; /* 로고와 네비게이션 사이의 간격 조정 */
+  flex-shrink: 0; /* 로고 크기가 축소되지 않도록 함 */
+}
+
+.logo-image {
+  height: 30px;
+  width: auto; /* 로고 이미지의 원래 비율을 유지하면서 높이에 맞춰 너비를 조정 */
+  margin-right: auto; /* 로고를 왼쪽으로 밀어붙임 */
+}
+
+.site-navigation .nav-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  list-style: none;
+}
+
+.nav-item {
+  margin: 0 15px; /* 네비게이션 항목 간의 간격 */
+  cursor: pointer;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+}
+
+.search-input {
+  outline: none;
+  border: none;
+}
+
+.hero-image-container {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.intro-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.intro-content {
+  margin-bottom: 16px;
+}
+
+
+
+/* 로그인 버튼 스타일 */
+.login-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.login-button {
+  background-color: #00C897; /* 민트색 배경 */
+  color: #FFFFFF; /* 하얀색 글씨 */
+  text-align: center;
+  width: 80px;
+  padding: 8px 16px;
+  border-radius: 4px; /* 버튼 모서리를 약간 둥글게 */
+  text-decoration: none; /* 밑줄 제거 */
+  font-weight: bold; /* 글씨 굵게 */
+}
