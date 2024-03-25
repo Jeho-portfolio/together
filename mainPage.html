@@ -1,89 +1,66 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Webpage Design</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    />
-    <style>
-      /* Since the exact font was not specified, we will use a default sans-serif font. 
-     Adjust the font-family as needed to match the design. */
-      body {
-        font-family: "Noto Sans KR", sans-serif;
-      }
-    </style>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="bg-gray-100">
-      <!-- Header -->
-      <header class="p-5 bg-white shadow">
-        <div class="container mx-auto flex justify-between items-center">
-          <div class="flex space-x-4">
-            <!-- Logo placeholder -->
-            <div>
-              <img
-                src="logo.png"
-                alt="로고 이미지"
-                style="width: 100px; height: 30px"
-              />
-            </div>
-            <!-- Navigation -->
-            <nav>
-              <ul class="flex space-x-4">
-                <li>학업</li>
-                <li>취업</li>
-                <li>스포츠</li>
-                <li>문화예술</li>
-                <li>여가</li>
-                <li>사회활동</li>
-                <li>취미활동</li>
-                <!-- Repeat for other menu items -->
-              </ul>
-            </nav>
-          </div>
-          <!-- Search bar -->
-          <div class="flex items-center border p-2">
-            <input class="outline-none" type="text" placeholder="로그인" />
-          </div>
-        </div>
-      </header>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webpage Design</title>
 
-      <!-- Main Content -->
-      <main class="container mx-auto p-5">
-        <!-- Hero Image container -->
-        <div class="flex justify-center mb-6">
-          <!-- flex and justify-center will center the image -->
-          <img
-            class="max-w-full h-auto"
-            src="banner.png"
-            alt="메인 이미지"
-            style="width: 600px; height: 600px"
-          />
-          <!-- max-w-full and h-auto are used for responsive images -->
-        </div>
-        <!-- Text content -->
-        <article>
-          <h1 class="text-2xl font-bold mb-4">사이트 소개</h1>
-          <p class="mb-4">+ 소개글, 사진 등</p>
-        </article>
-      </main>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
 
-      <!-- Footer -->
-      <footer class="bg-white p-5">
-        <div class="container mx-auto">
-          <p>
-            개인정보 처리방침, 사이트 정보, 개발자이메일, 고객센터 전화번호 등
-          </p>
-        </div>
-      </footer>
+<div class="site-background">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo-and-nav-container">
+        <!-- Logo -->
+        <a href="index.html" class="site-logo">
+          <img src="logo.png" alt="로고 이미지" class="logo-image">
+        </a>
+        <!-- Navigation -->
+        <nav class="site-navigation">
+          <ul class="nav-list">
+            <li class="nav-item">학업</li>
+            <li class="nav-item">취업</li>
+            <li class="nav-item">스포츠</li>
+            <li class="nav-item">문화예술</li>
+            <li class="nav-item">여가</li>
+            <li class="nav-item">사회활동</li>
+            <li class="nav-item">취미활동</li>
+          </ul>
+        </nav>
+      </div>
+      <!-- Search bar 대신 로그인 버튼 추가 -->
+<div class="login-button-container">
+    <a href="login.html" class="login-button">로그인</a>
+  </div>
     </div>
-  </body>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Image container -->
+    <div class="hero-image-container">
+      <img class="hero-image" src="banner.png" alt="메인 이미지">
+    </div>
+    <!-- Text content -->
+    <article class="site-introduction">
+      <h1 class="intro-title">사이트 소개</h1>
+      <p class="intro-content">+ 소개글, 사진 등</p>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <p class="footer-content">개인정보 처리방침, 사이트 정보, 개발자이메일, 고객센터 전화번호 등</p>
+    </div>
+  </footer>
+</div>
+
+</body>
 </html>
+
