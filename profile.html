@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Card</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>User Profile</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body { font-family: 'Noto Sans KR', sans-serif; }
-    </style>
+    <link rel="stylesheet" href="profile.css">
 </head>
-<body class="bg-gray-100">
-    <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
-        <div class="px-6 py-4">
-            <div class="text-center">
-                <img class="w-24 h-24 mx-auto rounded-full" src="https://placehold.co/100x100" alt="Apeach character playing a trumpet">
-                <h2 class="text-3xl font-semibold text-gray-800 mt-1">홍길동</h2>
-
-                <div class="flex justify-between mt-4">
-                    <span>성별</span>
-                    <span class="font-semibold">남성</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>나이</span>
-                    <span class="font-semibold">20살</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>학번</span>
-                    <span class="font-semibold">24123456</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>학과</span>
-                    <span class="font-semibold">컴퓨터공학과</span>
+<body class="background-user">
+    <div class="card-user">
+        <div class="info-user">
+            <div class="center-content">
+                <img class="center-avatar" src="https://placehold.co/100x100" alt="User profile picture">
+                <h2 class="name-user">홍길동</h2>
+                <div class="details-user">
+                    <div class="detail-row">
+                        <span>성별</span>
+                        <span class="detail-text">남성</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>생년월일</span>
+                        <span class="detail-text">2005.12.31</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>학번</span>
+                        <span class="detail-text">24123456</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>학과</span>
+                        <span class="detail-text">컴퓨터공학과</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
 </html>
+
+
+
+
 
