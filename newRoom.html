@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-200 p-5">
+    <div class="max-w-md mx-auto">
+        <div class="bg-white p-5 rounded-lg shadow-lg text-center">
+            <h2 class="text-lg font-bold mb-4">방만들기</h2>
+            
+            <form method="post" action="/New_Room">
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="game_name">
+                    방 제목
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="game_name" type="text" placeholder="방 제목을 입력해주세요!">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="category">
+                        분야
+                    </label>
+                    <select class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="major-category">
+                        <option value="">분야를 선택해주세요!</option>
+                        <option value="학업">학업</option>
+                        <option value="취업">취업</option>
+                        <option value="스포츠">스포츠</option>
+                        <option value="문화예술">문화예술</option>
+                        <option value="여가">여가</option>
+                        <option value="사회활동">사회활동</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sub-category">
+                        활동
+                    </label>
+                    <select class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="sub-category" disabled>
+                        <option value="">먼저 분야를 선택해주세요!</option>
+                    </select>
+                </div>
+                
+                <!-- 여기에 나머지 폼 요소들을 포함시킵니다 -->
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="max_players">
+                        최대 인원수
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="max_players" type="text" placeholder="최대 인원수를 입력해주세요!">
+             </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="status1">
+                        오픈카톡방 주소
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="status1" type="text" placeholder="오픈카톡방 주소를 입력해주세요!">
+                </div>
+            
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="status2">
+                        마감일
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="status2" type="text" placeholder="마감일을 입력해주세요!">
+                </div>
+            
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="status3">
+                        방 소개
+                    </label>
+                    <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight" id="status3" placeholder="간단한 방 소개를 입력해주세요!" rows="5"></textarea>
+                </div>
+                <div class="flex justify-around mt-4">
+                    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">
+                        확인
+                    </button>
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" type="reset">
+                        취소
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const majorCategory = document.getElementById('major-category');
+        const subCategory = document.getElementById('sub-category');
+      
+        const categoryOptions = {
+          "학업": ["스터디", "공모전", "과제", "동아리"],
+          "취업": ["면접", "자격증", "자기소개서"],
+          "스포츠": ["헬스"],
+          "문화예술": ["전시회", "공연", "영화"],
+          "여가": ["여행", "맛집", "게임"],
+          "사회활동": ["봉사", "교내모임"]
+        };
+      
+        majorCategory.addEventListener('change', function() {
+          const selectedCategory = this.value;
+          const options = categoryOptions[selectedCategory] || [];
+      
+          subCategory.innerHTML = '<option value="">활동을 선택해주세요!</option>' + (options.length ? options.map(option => `<option value="${option}">${option}</option>`).join('') : '<option value="">선택 가능한 세부 카테고리가 없습니다</option>');
+          subCategory.disabled = !options.length;
+        });
+    </script>
+</body>
+</html>
