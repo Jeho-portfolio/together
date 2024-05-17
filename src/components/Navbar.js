@@ -13,8 +13,10 @@ const Navbar = () => {
     { name: "여가", path: "/leisure", activities: ["여행", "맛집", "게임"] },
     { name: "사회활동", path: "/social", activities: ["봉사", "아르바이트"] },
   ];
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   // 컴포넌트가 마운트될 때 로그인 상태를 확인
   useEffect(() => {
@@ -37,16 +39,44 @@ const Navbar = () => {
         } else {
           throw new Error('Unexpected status code: ' + response.status);
         }
+        
+
       } catch (error) {
         console.error('Error fetching login status:', error);
         setIsLoggedIn(false);
         setUserData({});
+      } finally {
+        setIsLoading(false);
       }
     };
 
     checkLoginStatus();
   }, []);
 
+  if (isLoading) {
+    return null;  // 로딩 중이면 아무것도 표시하지 않음
+  }
+
+  const logout = async () => {
+    try {
+      const response = await fetch('/auth/logout', {
+        method: 'GET', // 또는 POST, 서버 구현에 따라 달라질 수 있습니다.
+        credentials: 'include' // 쿠키를 포함시키기 위해 필요
+      });
+      if (response.ok) {
+        // 성공적으로 로그아웃 처리된 경우
+        // 로그인 상태 업데이트 또는 페이지 리다이렉션
+        setIsLoggedIn(false); // 상태 업데이트
+        // 리다이렉션 (예: 홈 페이지 또는 로그인 페이지로 이동)
+        window.location.href = '/'; 
+      } else {
+        // 로그아웃 실패 처리
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error during logout', error);
+    }
+  };
 
   return (
     <header className="bg-white shadow-md">
@@ -85,17 +115,21 @@ const Navbar = () => {
           {isLoggedIn ? (
             <div className="flex items-center space-x-4">
             <h1>{userData.name}</h1>
-            <button className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
+            <button 
+            onClick={() => navigate('/my_room')}
+            className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
+              
               마이페이지
             </button>
-            <button className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
+            <button onClick={logout} className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
               로그아웃
             </button>
+
+          <Link to="/create-room" className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">방 만들기</Link>
             </div>
           ) : (
             <div className="flex items-center space-x-4">
             <Link to="/login" className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">로그인</Link>
-            <Link to="/create-room" className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">방 만들기</Link>
             </div>
           )
         }
