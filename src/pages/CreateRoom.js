@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 //네이게이트 훅
 import { useNavigate } from 'react-router-dom';
 
@@ -6,23 +6,81 @@ import { useNavigate } from 'react-router-dom';
 
 // CreateRoomForm 컴포넌트 정의
 const CreateRoom = () => {
+
+  
 // useState를 사용한 상태 관리 코드는 여기 있음
   const navigate = useNavigate();
 
+  const Categories = [
+    { name: "학업", key: "Academic" },
+    { name: "취업", key: "Employment" },
+    { name: "스포츠", key: "Sports" },
+    { name: "문화예술", key: "Arts" },
+    { name: "여가", key: "Leisure" },
+    { name: "사회활동", key: "Social" },
+  ];
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:8020/', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+          credentials: 'include'  // 쿠키를 포함시킬 경우
+        });
+        if (response.status === 200) {  // 로그인 성공
+          const data = await response.json();
+          setIsLoggedIn(true);
+          setUserData(data);
+        } else if (response.status === 401) {  // 로그인 실패
+          setIsLoggedIn(false);
+          setUserData({});
+        } else {
+          throw new Error('Unexpected status code: ' + response.status);
+        }
+        setIsLoading(false);
+
+      } catch (error) {
+        console.error('Error fetching login status:', error);
+        setIsLoggedIn(false);
+        setUserData({});
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
 
   const [formData, setFormData] = useState({
-    Roomtitle: '',
-    majorCategory: '',
-    subCategory: '',
-    Maxpeople: '',
-    Opentalk: '',
-    startDate: '',
-    endDate: '',
-    description: '',
+    project_name: '',
+    leader: '',
+    contents: '',
+    project_start: '',
+    project_end: '',
+    occupancy: '',
+    main_type: '',
+    sub_type: '',
+    kakao_chat: ''
   });
    const [formError, setFormError] = useState({
-    endDate: '',
+    project_end: '',
   });
+
+  // userData가 로드되면 leader 필드를 업데이트
+  useEffect(() => {
+    if (userData.name) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        leader: userData.name
+      }));
+    }
+  }, [userData]);
 
   // 카테고리에 따른 하위 카테고리 옵션
   const categoryOptions = {
@@ -38,89 +96,100 @@ const CreateRoom = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    // 입력값이 변경될 때 에러 상태를 업데이트
-    if (name === "endDate" && formData.startDate && value < formData.startDate) {
+    if (name === "project_end" && formData.project_start && value < formData.project_start) {
       setFormError({
         ...formError,
-        endDate: '마감일은 시작일 이후여야 합니다.',
+        project_end: '마감일은 시작일 이후여야 합니다.',
       });
     } else {
       setFormError({
         ...formError,
-        endDate: '',
+        project_end: '',
       });
     }
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
   };
 
   // 메인 카테고리 변경시 하위 카테고리 업데이트
   const handleMajorCategoryChange = (e) => {
-    const majorCategory = e.target.value;
-    setFormData({ ...formData, majorCategory, subCategory: '' });
+    const main_type = e.target.value;
+    setFormData({ ...formData, main_type, sub_type: '' });
   };
+
+  
 
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // API 호출을 위한 URL
-    const apiUrl = 'http://localhost:8020/api/rooms';
-
     try {
-        const response = await fetch(apiUrl, {
+        const response = await fetch('http://localhost:8020/New_Room', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+
             },
+            credentials: 'include',
             body: JSON.stringify(formData),
         });
 
-        if (!response.ok) throw new Error('방 생성 실패');
+        const data = await response.json();  // 응답을 JSON으로 파싱
+        console.log('Server response:', data);
 
-        const result = await response.json();
-        console.log('Form Data Submitted', result);
-
-        // 방 생성 후, 다른 페이지로 이동하거나 사용자에게 알림을 표시할 수 있습니다.
-        navigate('/rooms'); // 예시: 방 목록 페이지로 이동
+        if (response.ok) {
+            // 성공적으로 방이 생성되면, 카테고리에 따라 리디렉트
+            const category = Categories.find(category => category.name === formData.main_type);
+            if (category) {
+                navigate(`/${category.key}`);
+            } else {
+                console.error('Category key not found');
+                navigate('/');
+            }
+        } else {
+            throw new Error(data.message || '방 생성 실패');
+        }
     } catch (error) {
         console.error(error);
-        navigate('/rooms');
+        navigate('/');  // 에러 발생 시 기본 페이지로 이동
     }
 };
 
 
+if (isLoading) {
+  return null;  // 로딩 중이면 아무것도 표시하지 않음
+}
 
 
   return (
-    <div className="bg-gray-200 p-5">
+    isLoggedIn ? (
+      <div className="bg-gray-200 p-5">
       <div className="max-w-md mx-auto">
         <div className="bg-white p-5 rounded-lg shadow-lg text-center">
           <h2 className="text-lg font-bold mb-4">방만들기</h2>
           <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Roomtitle">방 제목</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="project_name">방 제목</label>
             <input
               type="text"
-              id="Roomtitle"
-              name="Roomtitle"
+              id="project_name"
+              name="project_name"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
               placeholder="방 제목을 입력해주세요!"
-              value={formData.Roomtitle} 
+              value={formData.project_name} 
              onChange={handleInputChange}
           />
         </div>
-
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="majorCategory">분야</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="main_type">분야</label>
               <select
-                id="majorCategory"
-                name="majorCategory"
+                id="main_type"
+                name="main_type"
                 className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-                value={formData.majorCategory}
+                value= {formData.main_type}
                 onChange={handleMajorCategoryChange}
               >
                 <option value="">분야를 선택해주세요!</option>
@@ -131,17 +200,17 @@ const CreateRoom = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="subCategory">활동</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sub_type">활동</label>
               <select
-                id="subCategory"
-                name="subCategory"
+                id="sub_type"
+                name="sub_type"
                 className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-                value={formData.subCategory}
+                value={formData.sub_type}
                 onChange={handleInputChange}
-                disabled={!formData.majorCategory || !categoryOptions[formData.majorCategory].length}
+                disabled={!formData.main_type || !categoryOptions[formData.main_type].length}
                 >
                   <option value="">활동을 선택해주세요!</option>
-                  {formData.majorCategory && categoryOptions[formData.majorCategory].map((option) => (
+                  {formData.main_type && categoryOptions[formData.main_type].map((option) => (
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
@@ -149,73 +218,73 @@ const CreateRoom = () => {
 
             {/* 여기에 나머지 폼 요소들을 포함시키세요. */}
             <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Maxpeople">최대 인원수</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="occupancy">최대 인원수</label>
             <input
               type="text"
-              id="Maxpeople"
-              name="Maxpeople"
+              id="occupancy"
+              name="occupancy"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
               placeholder="최대 인원수를 입력해주세요!"
-              value={formData.Maxpeople} 
+              value={formData.occupancy} 
              onChange={handleInputChange}
           />
         </div>
 
         <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Opentalk">오픈카톡방 주소</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="kakao_chat">오픈카톡방 주소</label>
             <input
               type="text"
-              id="Opentalk"
-              name="Opentalk"
+              id="kakao_chat"
+              name="kakao_chat"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
               placeholder="오픈카톡방 주소를 입력해주세요!"
-              value={formData.Opentalk} 
+              value={formData.kakao_chat} 
              onChange={handleInputChange}
           />
         </div>
 
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+    
         <div className="flex justify-between space-x-4">
           <div className="w-1/2">
-            <label htmlFor="startDate" className="block text-gray-700 text-sm font-bold mb-2">시작일</label>
+            <label htmlFor="project_start" className="block text-gray-700 text-sm font-bold mb-2">시작일</label>
             <input
               type="date"
-              id="startDate"
-              name="startDate"
+              id="project_start"
+              name="project_start"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-              value={formData.startDate}
+              value={formData.project_start}
               onChange={handleInputChange}
             />
           </div>
           <div className="w-1/2">
-            <label htmlFor="endDate" className="block text-gray-700 text-sm font-bold mb-2">마감일</label>
+            <label htmlFor="project_end" className="block text-gray-700 text-sm font-bold mb-2">마감일</label>
             <input
               type="date"
-              id="endDate"
-              name="endDate"
+              id="project_end"
+              name="project_end"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-              value={formData.endDate}
-              min={formData.startDate} // 시작일을 min 속성으로 설정
+              value={formData.project_end}
+              min={formData.project_start} // 시작일을 min 속성으로 설정
               onChange={handleInputChange}
             />
-              {formError.endDate && <p className="text-red-500 text-sm">{formError.endDate}</p>}
+              {formError.project_end && <p className="text-red-500 text-sm">{formError.project_end}</p>}
           </div>
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">방 소개 및 방장 프로필</label>
+          <label htmlFor="contents" className="block text-gray-700 text-sm font-bold mb-2">방 소개 및 방장 프로필</label>
           <textarea
-            id="description"
-            name="description"
+            id="contents"
+            name="contents"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
             rows="5"
             placeholder="간단한 방 소개와 함께 방장님을 편히 소개해주세요! 예: 안녕하세요! 저는 코딩을 좋아하는 컴퓨터공학과 학생입니다. 같이 목요일마다 코딩 스터디 해봐요!"
-            value={formData.description}
+            value={formData.contents}
             onChange={handleInputChange}
           ></textarea>
         </div>
-      </form>
+      
 
 
             <div className="flex justify-around mt-4">
@@ -230,6 +299,12 @@ const CreateRoom = () => {
         </div>
       </div>
     </div>
+  
+    ) : (
+      <div>
+        <h2>로그인을 해주세요.</h2>
+      </div>
+    )
   );
 };
 
