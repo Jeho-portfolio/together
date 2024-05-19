@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
@@ -18,44 +18,38 @@ const Navbar = () => {
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // 컴포넌트가 마운트될 때 로그인 상태를 확인
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const response = await fetch('http://localhost:8020/', {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-          credentials: 'include'  // 쿠키를 포함시킬 경우
-        });
-        if (response.status === 200) {  // 로그인 성공
-          const data = await response.json();
-          setIsLoggedIn(true);
-          setUserData(data);
-        } else if (response.status === 401) {  // 로그인 실패
-          setIsLoggedIn(false);
-          setUserData({});
-        } else {
-          throw new Error('Unexpected status code: ' + response.status);
-        }
-        
-
-      } catch (error) {
-        console.error('Error fetching login status:', error);
+  const checkLoginStatus = async () => {
+    try {
+      const response = await fetch('http://localhost:8020/', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+        credentials: 'include'  // 쿠키를 포함시킬 경우
+      });
+      if (response.status === 200) {  // 로그인 성공
+        const data = await response.json();
+        setIsLoggedIn(true);
+        setUserData(data);
+      } else if (response.status === 401) {  // 로그인 실패
         setIsLoggedIn(false);
         setUserData({});
-      } finally {
-        setIsLoading(false);
+      } else {
+        throw new Error('Unexpected status code: ' + response.status);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching login status:', error);
+      setIsLoggedIn(false);
+      setUserData({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    setIsLoggedIn(false); // 컴포넌트가 마운트될 때 로그인 상태를 초기화
     checkLoginStatus();
   }, []);
-
-  if (isLoading) {
-    return null;  // 로딩 중이면 아무것도 표시하지 않음
-  }
 
   const logout = async () => {
     try {
@@ -63,20 +57,21 @@ const Navbar = () => {
         method: 'GET', // 또는 POST, 서버 구현에 따라 달라질 수 있습니다.
         credentials: 'include' // 쿠키를 포함시키기 위해 필요
       });
-      if (response.ok) {
-        // 성공적으로 로그아웃 처리된 경우
-        // 로그인 상태 업데이트 또는 페이지 리다이렉션
-        setIsLoggedIn(false); // 상태 업데이트
-        // 리다이렉션 (예: 홈 페이지 또는 로그인 페이지로 이동)
-        window.location.href = '/'; 
-      } else {
-        // 로그아웃 실패 처리
+      if (!response.ok) {
         console.error('Logout failed');
       }
     } catch (error) {
       console.error('Error during logout', error);
+    } finally {
+      // 상태 업데이트 및 리다이렉션 (로그아웃 실패 시에도 동일하게 처리)
+      setIsLoggedIn(false);
+      window.location.href = '/'; 
     }
   };
+
+  if (isLoading) {
+    return null;  // 로딩 중이면 아무것도 표시하지 않음
+  }
 
   return (
     <header className="bg-white shadow-md">
@@ -99,12 +94,14 @@ const Navbar = () => {
               {activeDropdown === category.name && (
                 <div className="absolute top-full left-0 w-32 bg-white shadow-md">
                   {category.activities.map((activity, activityIndex) => (
-                    <span
+                    <button
                       key={activityIndex}
-                      className="block px-4 py-2 text-gray-600 text-center pointer-events-none"
+                      onClick={() => navigate(category.path, { state: { subCategory: activity } })}
+                      className="block w-full px-4 py-2 text-gray-600 text-center hover:bg-blue-500 hover:text-white"
+
                     >
                       {activity}
-                    </span>
+                    </button>
                   ))}
                 </div>
               )}
@@ -112,27 +109,24 @@ const Navbar = () => {
           ))}
         </nav>
 
-          {isLoggedIn ? (
-            <div className="flex items-center space-x-4">
+        {isLoggedIn ? (
+          <div className="flex items-center space-x-4">
             <h1>{userData.name}</h1>
             <button 
-            onClick={() => navigate('/my_room')}
-            className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
-              
+              onClick={() => navigate('/my_room')}
+              className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
               마이페이지
             </button>
             <button onClick={logout} className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">
               로그아웃
             </button>
-
-          <Link to="/create-room" className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">방 만들기</Link>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-4">
+            <Link to="/create-room" className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">방 만들기</Link>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-4">
             <Link to="/login" className="bg-[#42cec8] text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-300">로그인</Link>
-            </div>
-          )
-        }
+          </div>
+        )}
       </div>
     </header>
   );
